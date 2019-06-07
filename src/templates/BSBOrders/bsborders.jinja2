@@ -1,0 +1,57 @@
+{% extends "base.jinja2" %}
+{% block content %}
+    <div class="page-header">
+        <h1>BSB Orders</h1>
+            <small>Query results for below query input:</small>
+    </div>
+    <div>
+    <p>{{ query }}</p>
+    </div>
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Section</th>
+                <th scope="col">Area</th>
+                <th scope="col">Region</th>
+                <th scope="col">MY</th>
+                <th scope="col">PlayerID</th>
+                <th scope="col">Order Detail ID</th>
+                <th scope="col">Player First Name</th>
+                <th scope="col">Player Last Name</th>
+                <th scope="col">Payment Date</th>
+                <th scope="col">Payment to Region</th>
+                <th scope="col">Payment to National</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for n in range(0, (bsborders | length)) %}
+                <tr>
+                    <th scope="row">{{ n+1 }}</th>
+                    <td>{{ bsborders[n].section }}</td>
+                    <td>{{ bsborders[n].area }}</td>
+                    <td>{{ bsborders[n].region }}</td>
+                    <td>{{ bsborders[n].membershipYear }}</td>
+                    <td>{{ bsborders[n].playerID }}</td>
+                    <td>{{ bsborders[n].orderDetailID }}</td>
+                    <td>{{ bsborders[n].playerFirstName }}</td>
+                    <td>{{ bsborders[n].playerLastName }}</td>
+                    <td>{{ bsborders[n].paymentDate }}</td>
+                    <td>${{ bsborders[n].payment_to_region }}</td>
+                    <td>${{ bsborders[n].payment_to_national }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+
+
+
+
+
+
+
+
+
+
+
+
+{% endblock %}
