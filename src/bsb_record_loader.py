@@ -1,11 +1,12 @@
 import csv
 from src.models.bsb.orders.order import BSBOrder
 from src.common.mongo.database import Database
+import os
 
-
+#print()
 Database.initialize()
 
-with open("src/common/all_bsb_orders.csv") as csvFile:
+with open("common/jan_sample_orders.csv") as csvFile:
     csvreader = csv.reader(csvFile, delimiter=",")
     next(csvreader)
     for line in csvreader:

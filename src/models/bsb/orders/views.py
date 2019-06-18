@@ -3,6 +3,7 @@ import json
 from flask import Blueprint, render_template, request, redirect, url_for
 
 from src.models.bsb.orders.order import BSBOrder
+from src.models.bsb.orders.utils import handleRequestForm
 
 __author__ = 'nabee1'
 
@@ -17,8 +18,13 @@ def index():
 @bsborder_blueprint.route('/bsborders_query_results', methods = ['POST', 'GET'])
 def bsborders_query():
     if request.method == 'POST':
-        # Splits input by commas, removes whitespaces and if element value is just empty string after comma split
-        # then does not append it to list
-        query_values_dict = dict((k, [x.strip() for x in v.split(",") if len(x.strip()) > 0]) for k, v in dict(request.form).items())
-        print(query_values_dict)
-        return render_template('BSBOrders/bsborders.jinja2', bsborders=BSBOrder.find_by_multiple_filters(query_values_dict), query=query_values_dict)
+
+        mongo_query = handleRequestForm(request.form, {
+                                                        "orderDetailID": ["CommaString"],
+                                                        "playerID": ["CommaString"],
+                                                        "payment_Date_Start": ["DateString"],
+                                                        "payment_Date_End": ["DateString"],
+                                                        "region": ["DropdownString"]
+                                                        })
+        print(mongo_query)
+        return render_template('BSBOrders/bsborders.jinja2', bsborders=BSBOrder.find_by_multiple_filters(mongo_query), query=mongo_query)

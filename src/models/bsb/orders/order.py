@@ -103,43 +103,9 @@ class BSBOrder(object):
         return [cls(**elem) for elem in Database.find(BSBOrderConstants.COLLECTION, {'playerID': {"$in": playerID}})]
 
     @classmethod
-    def find_by_multiple_filters(cls, query_values_dict):
-        playerID_query_dict = {"$in": query_values_dict['playerID']} if (len(query_values_dict['playerID']) > 0) else {'discard': True}
-        orderDetailID_query_dict = {"$in": query_values_dict['orderDetailID']} if (len(query_values_dict['orderDetailID']) > 0) else {'discard': True}
-        region_query_dict = {"$in": query_values_dict['region']} if not (query_values_dict['region'][0] == 'None') else {'discard': True}
-        paymentsDates_query_dict = {"$gte": query_values_dict["dateStart"][0] if (len(query_values_dict["dateStart"]) > 0) else {'discard': True},
-                                    "$lt": query_values_dict["dateEnd"][0] if (len(query_values_dict["dateStart"]) > 0) else {'discard': True}
-                                    }
-        and_query_ = list()
-        if not 'discard' in playerID_query_dict.keys():
-            and_query_.append({'playerID': playerID_query_dict})
-        if not 'discard' in orderDetailID_query_dict.keys():
-            and_query_.append({'orderDetailID': orderDetailID_query_dict})
-        if not 'discard' in region_query_dict.keys():
-            and_query_.append({'region': region_query_dict})
-
-        print(playerID_query_dict)
-        print(orderDetailID_query_dict)
-        print(region_query_dict)
-        print(paymentsDates_query_dict)
-
+    def find_by_multiple_filters(cls, mongo_query):
         return [cls(**elem) for elem in Database.find(BSBOrderConstants.COLLECTION,
-                                                      {
-                                                          "$and": and_query_
-                                                      }
-                                                      )]
-        """
-        return [cls(**elem) for elem in Database.find(BSBOrderConstants.COLLECTION,
-                                                      {
-                                                          "$and": [
-                                                              {'playerID': playerID_query_dict},
-                                                              {'orderDetailID': orderDetailID_query_dict},
-                                                              {'region': region_query_dict},
-                                                              {'paymentDate': paymentsDates_query_dict}
-                                                          ]
-                                                      }
-                                                      )]
-        """
+                                                      mongo_query)]
 
     @staticmethod
     def generate_regions_list():
