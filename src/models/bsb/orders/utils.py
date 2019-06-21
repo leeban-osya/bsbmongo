@@ -10,18 +10,21 @@ def handleRequestForm(request_form, transform_field_config):
     input_query = dict(request_form)
     mongo_query = {"$and": list()}
 
-    print(input_query)
+    print("raw_input", input_query)
     mongo_date_queries = {}
-    for fieldName,fieldData in input_query.items():
-        mongo_field_query = str(fieldData[0])
-        if len(mongo_field_query) < 1: continue
+    mongo_name_queries = {}
+    for fieldName, fieldData in input_query.items():
+        #print(fieldName)
+        mongo_field_query = str(fieldData)
+        if len(mongo_field_query) < 1:
+            continue
         for transform in transform_field_config[fieldName]:
             if transform == "CommaString":
                 mongo_field_query = handleCommaString(mongo_field_query)
             if transform == "DateString":
-                mongo_field_query = mongo_field_query
-            if transform == "DropownString":
-                mongo_field_query = mongo_field_query
+                mongo_field_query = handleDateString(mongo_field_query)
+            if transform == "DropdownString":
+                mongo_field_query = handleDropdownString(mongo_field_query)
 
         if fieldName in ["playerID", "orderDetailID"]:
             if len(mongo_field_query) > 0:
@@ -31,10 +34,26 @@ def handleRequestForm(request_form, transform_field_config):
                                             })
 
         if fieldName in ["region"]:
-            if mongo_field_query != "None":
+            if mongo_field_query != "All Regions":
                 mongo_query["$and"].append({fieldName: {
                                                         "$in": [mongo_field_query]
                                                         }})
+
+        if fieldName in ["playerName", "userName"]:
+            print(fieldName, mongo_field_query)
+            nameType = fieldName.split("Name")[0]
+            mongo_name_queries[nameType] = mongo_name_queries.get(nameType, {
+                "FirstName": list(),
+                "LastName": list()
+            })
+            for name_query in mongo_field_query:
+                if len(name_query.split(" ")) > 1:
+                    firstName, lastName = " ".join(name_query.split(" ")[:-1]), name_query.split(" ")[-1]
+                    mongo_name_queries[nameType]["FirstName"].append(firstName)
+                    mongo_name_queries[nameType]["LastName"].append(lastName)
+                else:
+                    lastName = name_query
+                    mongo_name_queries[nameType]["LastName"].append(lastName)
 
         if fieldName in ["payment_Date_Start", "payment_Date_End", "order_Date_Start", "order_Date_End"]:
             dateFieldMeta = fieldName.split("_")
@@ -46,7 +65,15 @@ def handleRequestForm(request_form, transform_field_config):
             if dateStartEnd == "End":
                 mongo_date_queries[dateType]["$lt"] = mongo_field_query
 
-    for k,v in mongo_date_queries.items():
+    print(mongo_name_queries)
+    if len(mongo_name_queries) > 0:
+        for k, v in mongo_name_queries.items():
+            for key, val in v.items():
+                if len(val) > 0:
+                    mongo_query["$and"].append({k+key: {
+                                                        "$in": val
+                                                        }})
+    for k, v in mongo_date_queries.items():
         if len(mongo_query["$and"]) > 0:
             mongo_query["$and"].append({k:v})
 
@@ -55,26 +82,9 @@ def handleRequestForm(request_form, transform_field_config):
         for k,v in mongo_date_queries.items():
             mongo_query[k] = mongo_date_queries[k]
 
-    print(mongo_date_queries)
-    print(mongo_query)
+    print("mongo_query", mongo_query)
     return mongo_query
-"""
-playerID_query_dict = {"$in": query_values_dict['playerID']} if (len(query_values_dict['playerID']) > 0) else {'discard': True}
-orderDetailID_query_dict = {"$in": query_values_dict['orderDetailID']} if (len(query_values_dict['orderDetailID']) > 0) else {'discard': True}
-region_query_dict = {"$in": query_values_dict['region']} if not (query_values_dict['region'][0] == 'None') else {'discard': True}
-paymentsDates_query_dict = {"$gte": query_values_dict["dateStart"][0] if (len(query_values_dict["dateStart"]) > 0) else {'discard': True},
-                            "$lt": query_values_dict["dateEnd"][0] if (len(query_values_dict["dateStart"]) > 0) else {'discard': True}
-                            }
-                            
-{
-"$and": [
-  {'playerID': playerID_query_dict},
-  {'orderDetailID': orderDetailID_query_dict},
-  {'region': region_query_dict},
-  {'paymentDate': paymentsDates_query_dict}
-]
-}
-"""
+
 
 
 def handleCommaString(comma_string):
@@ -86,4 +96,9 @@ def handleCommaString(comma_string):
     """
     return [x.strip() for x in comma_string.split(",") if len(x.strip()) > 0]
 
+def handleDateString(date_string):
+    return date_string
+
+def handleDropdownString(dropdown_string):
+    return dropdown_string
 

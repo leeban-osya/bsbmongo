@@ -98,6 +98,7 @@ class BSBOrder(object):
     def find_by_orderDetailID(cls, orderDetailID):
         return [cls(**elem) for elem in Database.find(BSBOrderConstants.COLLECTION, {'orderDetailID': {"$in": orderDetailID}})]
 
+
     @classmethod
     def find_by_playerID(cls, playerID):
         return [cls(**elem) for elem in Database.find(BSBOrderConstants.COLLECTION, {'playerID': {"$in": playerID}})]
@@ -110,7 +111,7 @@ class BSBOrder(object):
     @staticmethod
     def generate_regions_list():
         region_list = sorted(Database.distinct(BSBOrderConstants.COLLECTION, 'region'))
-        region_list.insert(0, "None")
-        print(region_list)
+        region_list.insert(0, "All Regions")
+        #print(region_list)
         return region_list
 

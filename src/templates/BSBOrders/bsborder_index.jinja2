@@ -5,36 +5,55 @@
         <p class="lead">This webpage will be used to quickly query BSB Cash file data.</p>
     </div>
     <form action="{{ url_for('bsborders.bsborders_query') }}"  method="post">
-            <div class="form-group">
-            <label for="exampleFormControlSelect1">Region Select</label>
-            <select class="form-control" id="region" name="region">
-              {% for region in regions %}
-                <option>{{ region }}</option>
-            {% endfor %}}
-            </select>
-          </div>
-            <div class="form-group">
-                <label for="orderDetailID">BSB Order Detail ID</label>
-                <input type="text" class="form-control" id="orderDetailID" name="orderDetailID"
-                       placeholder="Enter Order Detail IDs seperated by commas: 8567896, 23647519 etc">
+            <div class="form-row">
+                <div class="form-group col-md-2">
+                    <label for="payment_Date_Start">From Date</label>
+                    <input type="text" class="form-control form-control-sm" id="payment_Date_Start" name="payment_Date_Start"
+                           placeholder="Enter Start Date in format:- Year-Month-Day">
+                </div>
+                <div class="form-group col-md-2">
+                    <label for="payment_Date_End">To Date</label>
+                    <input type="text" class="form-control form-control-sm" id="payment_Date_End" name="payment_Date_End"
+                           placeholder="Enter End Date in format:- Year-Month-Day">
+                </div>
+                <div class="form-group col-md-4">
+                    <label>Region Select</label>
+                    <select class="form-control form-control-sm" id="region" name="region">
+                      {% for region in regions %}
+                        <option>{{ region }}</option>
+                    {% endfor %}}
+                    </select>
+                </div>
             </div>
-            <div class="form-group">
-                <label for="playerID">Player ID</label>
-                <input type="text" class="form-control" id="playerID" name="playerID"
-                       placeholder="Enter playerIDs seperated by commas: 854762, 563214 etc">
+            <div class="form-row">
+                <div class="form-group col-md-4">
+                    <label for="playerID">Player ID</label>
+                    <input type="text" class="form-control form-control-sm" id="playerID" name="playerID"
+                           placeholder="Enter playerIDs seperated by commas: 854762, 563214 etc">
+                </div>
+                <div class="form-group col-md-4">
+                    <label for="orderDetailID">BSB Order Detail ID</label>
+                    <input type="text" class="form-control form-control-sm" id="orderDetailID" name="orderDetailID"
+                           placeholder="Enter Order Detail IDs seperated by commas: 8567896, 23647519 etc">
+                </div>
+                <div class="form-group col-md-4">
+                    <label for="orderID">BSB Order ID</label>
+                    <input type="text" class="form-control form-control-sm" id="orderID" name="orderID"
+                           placeholder="Enter orderIDs seperated by commas: 854762, 563214 etc" disabled>
+                </div>
             </div>
-            <div class="form-group">
-                <label for="payment_Date_Start">From Date</label>
-                <input type="text" class="form-control" id="payment_Date_Start" name="payment_Date_Start"
-                       placeholder="Enter Start Date in format:- Year-Month-Day">
+            <div class="form-row">
+                <div class="form-group col-md-3">
+                    <label for="playerName">Player Name</label>
+                    <input type="text" class="form-control form-control-sm" id="playerName" name="playerName"
+                           placeholder="Enter player full names separated by commas. If only one name is entered will be treated as first name.">
+                </div>
+                <div class="form-group col-md-3">
+                    <label for="userName">Parent Name</label>
+                    <input type="text" class="form-control form-control-sm" id="userName" name="userName"
+                           placeholder="Enter parent full names separated by commas. If only one name is entered will be treated as first name.">
+                </div>
             </div>
-            <div class="form-group">
-                <label for="payment_Date_End">To Date</label>
-                <input type="text" class="form-control" id="payment_Date_End" name="payment_Date_End"
-                       placeholder="Enter End Date in format:- Year-Month-Day">
-            </div>
-
-
             <button type="submit" class="btn btn-success">Submit</button>
     </form>
 {% endblock %}

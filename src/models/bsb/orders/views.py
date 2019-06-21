@@ -18,13 +18,16 @@ def index():
 @bsborder_blueprint.route('/bsborders_query_results', methods = ['POST', 'GET'])
 def bsborders_query():
     if request.method == 'POST':
-
-        mongo_query = handleRequestForm(request.form, {
-                                                        "orderDetailID": ["CommaString"],
-                                                        "playerID": ["CommaString"],
-                                                        "payment_Date_Start": ["DateString"],
-                                                        "payment_Date_End": ["DateString"],
-                                                        "region": ["DropdownString"]
-                                                        })
-        print(mongo_query)
-        return render_template('BSBOrders/bsborders.jinja2', bsborders=BSBOrder.find_by_multiple_filters(mongo_query), query=mongo_query)
+        transform_field_config = {
+                                "orderDetailID": ["CommaString"],
+                                "playerID": ["CommaString"],
+                                "payment_Date_Start": ["DateString"],
+                                "payment_Date_End": ["DateString"],
+                                "region": ["DropdownString"],
+                                "playerName": ["CommaString"],
+                                "userName": ["CommaString"]
+                                }
+        mongo_query = handleRequestForm(request.form, transform_field_config)
+        bsborders = BSBOrder.find_by_multiple_filters(mongo_query)
+        print("# of search results:", len(bsborders))
+        return render_template('BSBOrders/bsborders.jinja2', bsborders=bsborders, query=mongo_query)
